@@ -27,6 +27,29 @@ export class AgBaseGridComponent {
     return this.store.columnDefs();
   });
 
+  // Check if header buttons should be visible
+  shouldShowHeader = computed(() => {
+    const headerButtons = this.store.headerButtons();
+
+    console.log('Checking header visibility. Buttons:', headerButtons);
+
+    // If buttons array is null, undefined, or empty, don't show header
+    if (!headerButtons || headerButtons.length === 0) {
+      console.log('Header hidden: No buttons or empty array');
+      return false;
+    }
+
+    // If all buttons are hidden, don't show header
+    const allButtonsHidden = headerButtons.every(button => button.hidden === true);
+    if (allButtonsHidden) {
+      console.log('Header hidden: All buttons are hidden');
+      return false;
+    }
+
+    console.log('Header visible: Has visible buttons');
+    return true;
+  });
+
   gridOptions = computed(() => {
     const baseOptions = this.store.gridOptions() || {};
     // If no theme is specified, default to legacy
@@ -37,7 +60,7 @@ export class AgBaseGridComponent {
     // Get row height from store configuration, fallback to 60
     const rowHeight = gridConfig?.rowHeight || 60;
     const headerHeight = gridConfig?.headerHeight || 60;
-    const toolbarHeight = 46;
+    const toolbarHeight = this.shouldShowHeader() ? 46 : 0; // Reduce toolbar height when header is hidden
     const calculatedHeight = (visibleRows * rowHeight) + headerHeight;
 
     // Update CSS custom properties
@@ -72,7 +95,7 @@ export class AgBaseGridComponent {
     // Get row height from store configuration, fallback to 60
     const rowHeight = gridConfig?.rowHeight || 60;
     const headerHeight = gridConfig?.headerHeight || 60;
-    const toolbarHeight = 46;
+    const toolbarHeight = this.shouldShowHeader() ? 46 : 0; // Reduce toolbar height when header is hidden
     const calculatedHeight = (visibleRows * rowHeight) + headerHeight;
 
     // Set CSS custom properties for dynamic height calculations

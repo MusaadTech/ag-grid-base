@@ -19,6 +19,12 @@ export class CustomHeaderComponent implements OnInit {
   // Make buttons reactive to store changes
   buttons = computed(() => this.store.headerButtons());
 
+  // Check if there are any visible buttons
+  hasVisibleButtons = computed(() => {
+    const buttons = this.buttons();
+    return buttons && buttons.length > 0 && buttons.some(button => !button.hidden);
+  });
+
   ngOnInit() {
     console.log('Custom header initialized');
   }

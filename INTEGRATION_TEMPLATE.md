@@ -99,11 +99,11 @@ export class YourGridComponent implements OnInit {
       { field: 'email', headerName: 'Email', sortable: true, filter: true, editable: true }
     ]);
 
-    // 5. Configure buttons
+    // 5. Configure buttons (header will auto-hide if all buttons are hidden)
     this.store.setHeaderButtons([
       { type: 'add', label: 'Add', icon: '➕', position: 'start' },
       { type: 'delete', label: 'Delete', icon: '🗑️', position: 'start' },
-      { type: 'refresh', label: 'Refresh', icon: '��', position: 'start' },
+      { type: 'refresh', label: 'Refresh', icon: '🔄', position: 'start' },
       { type: 'export', label: 'Export', icon: '📤', position: 'end' }
     ]);
 
@@ -150,6 +150,31 @@ export class YourGridComponent implements OnInit {
 
   private handleExport() {
     console.log('Export handled by base component');
+  }
+
+  // 🆕 Header Visibility Management
+  public toggleHeaderVisibility() {
+    const currentButtons = this.store.headerButtons();
+    if (currentButtons && currentButtons.length > 0) {
+      // Hide all buttons (header will auto-hide)
+      const hiddenButtons = currentButtons.map(btn => ({ ...btn, hidden: true }));
+      this.store.setHeaderButtons(hiddenButtons);
+    } else {
+      // Show all buttons (header will auto-show)
+      const visibleButtons = [
+        { type: 'add', label: 'Add', icon: '➕', position: 'start', hidden: false },
+        { type: 'delete', label: 'Delete', icon: '🗑️', position: 'start', hidden: false },
+        { type: 'refresh', label: 'Refresh', icon: '🔄', position: 'start', hidden: false },
+        { type: 'export', label: 'Export', icon: '📤', position: 'end', hidden: false }
+      ];
+      this.store.setHeaderButtons(visibleButtons);
+    }
+  }
+
+  public checkHeaderVisibility() {
+    const shouldShow = this.store.shouldShowHeader();
+    console.log('Header should be visible:', shouldShow);
+    return shouldShow;
   }
 }
 ```
@@ -203,6 +228,9 @@ export const appConfig: ApplicationConfig = {
 - ✅ Inline editing
 - ✅ Dynamic configuration
 - ✅ Responsive design
+- ✅ **Smart header visibility** (auto-hides when no buttons)
+- ✅ **Modern control flow syntax** (`@if`, `@for`)
+- ✅ **Dynamic height adjustment** (toolbar height adapts)
 
 **No need to worry about:**
 - ❌ Grid configuration
@@ -210,8 +238,91 @@ export const appConfig: ApplicationConfig = {
 - ❌ Styling
 - ❌ Export logic
 - ❌ Button management
+- ❌ Header visibility logic
+- ❌ Height calculations
 
 Just focus on your **service methods** and **data structure**! 🚀
+
+---
+
+## **🆕 Smart Header Visibility**
+
+### **Automatic Behavior**
+
+The header automatically hides when:
+- **No buttons**: `headerButtons` is null, undefined, or empty array
+- **All hidden**: All buttons have `hidden: true`
+
+```typescript
+// Header will be hidden
+this.store.setHeaderButtons(null);
+this.store.setHeaderButtons([]);
+this.store.setHeaderButtons([
+  { type: 'add', hidden: true },
+  { type: 'delete', hidden: true }
+]);
+
+// Header will be visible
+this.store.setHeaderButtons([
+  { type: 'add', hidden: false },
+  { type: 'delete', hidden: true }, // Mixed visibility works
+  { type: 'export', hidden: false }
+]);
+```
+
+### **Height Adjustment**
+
+When header is hidden, toolbar height automatically reduces to 0:
+
+```typescript
+// Check visibility
+const isVisible = this.store.shouldShowHeader();
+
+// Get current toolbar height
+const height = getComputedStyle(document.documentElement)
+  .getPropertyValue('--toolbar-height');
+```
+
+### **Testing Methods**
+
+```typescript
+// Test all scenarios
+this.store.testHeaderVisibility();
+
+// Manual control
+this.store.hideAllButtons();
+this.store.showAllButtons();
+this.store.clearAllButtons();
+```
+
+---
+
+## **🆕 Modern Control Flow Syntax**
+
+The library uses Angular's latest control flow syntax:
+
+### **Template Examples**
+
+```html
+<!-- Instead of *ngIf -->
+@if (shouldShowHeader()) {
+<div class="toolbar">
+  <app-header></app-header>
+</div>
+}
+
+<!-- Instead of *ngFor -->
+@for (item of items; track item.id) {
+<div class="item">{{ item.name }}</div>
+}
+```
+
+### **Benefits**
+
+- **Better Performance**: More efficient than `*ngIf`/`*ngFor`
+- **Type Safety**: Better TypeScript integration
+- **Cleaner Code**: More readable syntax
+- **Future-Proof**: Uses Angular's latest features
 
 ---
 
@@ -252,7 +363,7 @@ const complexData = await firstValueFrom(this.service.getComplexData());
 ### **Benefits:**
 
 1. **🔄 Universal Compatibility** - Works with ANY Observable
-2. **�� No Service Changes** - Don't modify your existing services
+2. **🔧 No Service Changes** - Don't modify your existing services
 3. **⚡ Simple Integration** - One line of code per method
 4. **🎯 Type Safe** - Maintains TypeScript types
 5. **🚀 Future Proof** - Works with new service methods too
@@ -390,5 +501,29 @@ this.store.setDataFetcher(async () => {
 - [ ] Update routes
 - [ ] Import `firstValueFrom` from 'rxjs'
 - [ ] Test your integration
+- [ ] **Optional**: Test header visibility functionality
+- [ ] **Optional**: Explore modern control flow syntax
 
 **That's it! Your grid is ready to use with real data.** 🎉
+
+---
+
+## **🆕 New Features Summary**
+
+### **Smart Header Visibility**
+- ✅ Automatically hides when no buttons are visible
+- ✅ Dynamic height adjustment (0px when hidden)
+- ✅ Smooth transitions
+- ✅ Testing methods included
+
+### **Modern Control Flow**
+- ✅ Uses `@if` instead of `*ngIf`
+- ✅ Uses `@for` instead of `*ngFor`
+- ✅ Better performance and type safety
+- ✅ Future-proof Angular syntax
+
+### **Enhanced Testing**
+- ✅ Header visibility testing
+- ✅ Height adjustment testing
+- ✅ Comprehensive example controls
+- ✅ Console logging for debugging

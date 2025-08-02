@@ -195,6 +195,24 @@ export const AgGridStore = signalStore(
         btn.type === buttonType ? { ...btn, disabled } : btn
       );
       patchState(store, { headerButtons });
+    },
+
+    // Utility method to check if header should be visible
+    shouldShowHeader: () => {
+      const headerButtons = store.headerButtons();
+
+      // If buttons array is null, undefined, or empty, don't show header
+      if (!headerButtons || headerButtons.length === 0) {
+        return false;
+      }
+
+      // If all buttons are hidden, don't show header
+      const allButtonsHidden = headerButtons.every(button => button.hidden === true);
+      if (allButtonsHidden) {
+        return false;
+      }
+
+      return true;
     }
   }))
 );

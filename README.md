@@ -5,6 +5,7 @@ A powerful, configurable, and reusable Angular data grid component library built
 ## Features
 
 - **Dynamic Configuration**: All grid settings configurable through centralized store
+- **Smart Header Visibility**: Automatically hides header when no buttons are visible
 - **Custom Header Buttons**: Positioned start/end with custom actions
 - **Multi-Row Selection**: Select multiple rows for bulk operations
 - **Editable Cells**: Inline editing with dropdowns and validation
@@ -198,6 +199,97 @@ this.store.setInsertFn(async () => {
 });
 ```
 
+## Smart Header Visibility
+
+The grid automatically manages header visibility based on button configuration:
+
+### Automatic Hiding Conditions
+
+The header is automatically hidden when:
+- **Null/Empty Buttons**: `headerButtons` is null, undefined, or an empty array
+- **All Hidden**: All buttons have `hidden: true`
+
+```typescript
+// Header will be hidden (null buttons)
+this.store.setHeaderButtons(null);
+
+// Header will be hidden (empty array)
+this.store.setHeaderButtons([]);
+
+// Header will be hidden (all buttons hidden)
+this.store.setHeaderButtons([
+  { type: 'add', label: 'Add', hidden: true },
+  { type: 'delete', label: 'Delete', hidden: true }
+]);
+
+// Header will be visible (mixed visibility)
+this.store.setHeaderButtons([
+  { type: 'add', label: 'Add', hidden: false },
+  { type: 'delete', label: 'Delete', hidden: true },
+  { type: 'export', label: 'Export', hidden: false }
+]);
+```
+
+### Dynamic Height Adjustment
+
+When the header is hidden, the toolbar height is automatically reduced to 0, providing a cleaner interface:
+
+```typescript
+// Check if header should be visible
+const shouldShow = this.store.shouldShowHeader();
+
+// Get current toolbar height
+const toolbarHeight = getComputedStyle(document.documentElement)
+  .getPropertyValue('--toolbar-height');
+```
+
+### Testing Header Visibility
+
+```typescript
+// Test all visibility scenarios
+this.store.testHeaderVisibility();
+
+// Hide all buttons
+this.store.hideAllButtons();
+
+// Show all buttons
+this.store.showAllButtons();
+
+// Clear all buttons
+this.store.clearAllButtons();
+```
+
+## Modern Control Flow Syntax
+
+The library uses Angular's modern control flow syntax (`@if`, `@for`) instead of traditional structural directives:
+
+### Template Examples
+
+```html
+<!-- Modern control flow syntax -->
+@if (shouldShowHeader()) {
+<div class="grid-toolbar">
+  <app-custom-header></app-custom-header>
+</div>
+}
+
+<!-- Button iteration -->
+@for (btn of getButtonsByPosition('start'); track btn.type) {
+@if (!btn.hidden) {
+<button class="action-btn" [disabled]="btn.disabled" (click)="onClick(btn)">
+  {{ btn.icon || btn.label }}
+</button>
+}
+}
+```
+
+### Benefits of Control Flow
+
+- **Better Performance**: More efficient than traditional `*ngIf` and `*ngFor`
+- **Type Safety**: Better TypeScript integration
+- **Cleaner Syntax**: More readable and maintainable
+- **Future-Proof**: Uses Angular's latest features
+
 ## Customization
 
 ### Dynamic Row Display
@@ -283,6 +375,7 @@ The grid automatically adapts to different screen sizes and includes:
 - **Responsive button positioning** (start/end groups)
 - **Dynamic height calculation** based on visible rows
 - **Mobile-friendly interactions**
+- **Smart header visibility** that adapts to content
 
 ## Example Implementation
 
@@ -294,6 +387,8 @@ The project includes a comprehensive example in `src/app/components/example/` th
 - ✅ Custom styling and theming
 - ✅ Export functionality
 - ✅ Interactive controls
+- ✅ Header visibility testing
+- ✅ Height adjustment functionality
 
 Run the example to see all features in action:
 

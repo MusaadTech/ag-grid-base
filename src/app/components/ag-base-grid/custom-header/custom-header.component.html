@@ -1,3 +1,4 @@
+@if (hasVisibleButtons()) {
 <div class="grid-header-buttons" #headerContainer>
   <div class="button-group start-group">
     @for (btn of getButtonsByPosition('start'); track btn.type) {
@@ -19,3 +20,4 @@
     }
   </div>
 </div>
+}

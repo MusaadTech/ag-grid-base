@@ -521,6 +521,103 @@ export class ExampleGridComponent implements OnInit {
     return this.store.getExportConfig();
   }
 
+  // Test methods for header visibility functionality
+  public testHeaderVisibility() {
+    console.log('=== Testing Header Visibility ===');
+
+    // Test 1: Set null buttons
+    console.log('Test 1: Setting null buttons');
+    this.store.setHeaderButtons(null as any);
+    console.log('Should show header:', this.store.shouldShowHeader());
+
+    // Test 2: Set empty array
+    console.log('Test 2: Setting empty array');
+    this.store.setHeaderButtons([]);
+    console.log('Should show header:', this.store.shouldShowHeader());
+
+    // Test 3: Set all hidden buttons
+    console.log('Test 3: Setting all hidden buttons');
+    const allHiddenButtons: HeaderButton[] = [
+      { type: 'add', label: 'Add', icon: '➕', hidden: true },
+      { type: 'delete', label: 'Delete', icon: '🗑️', hidden: true },
+      { type: 'refresh', label: 'Refresh', icon: '🔄', hidden: true }
+    ];
+    this.store.setHeaderButtons(allHiddenButtons);
+    console.log('Should show header:', this.store.shouldShowHeader());
+
+    // Test 4: Set mixed visibility buttons
+    console.log('Test 4: Setting mixed visibility buttons');
+    const mixedButtons: HeaderButton[] = [
+      { type: 'add', label: 'Add', icon: '➕', hidden: false },
+      { type: 'delete', label: 'Delete', icon: '🗑️', hidden: true },
+      { type: 'refresh', label: 'Refresh', icon: '🔄', hidden: false }
+    ];
+    this.store.setHeaderButtons(mixedButtons);
+    console.log('Should show header:', this.store.shouldShowHeader());
+
+    // Test 5: Restore original buttons
+    console.log('Test 5: Restoring original buttons');
+    this.store.setHeaderButtons(this.generateHeaderButtons());
+    console.log('Should show header:', this.store.shouldShowHeader());
+  }
+
+  public hideAllButtons() {
+    const currentButtons = this.store.headerButtons();
+    const allHiddenButtons = currentButtons.map(btn => ({ ...btn, hidden: true }));
+    this.store.setHeaderButtons(allHiddenButtons);
+    console.log('All buttons hidden');
+  }
+
+  public showAllButtons() {
+    const currentButtons = this.store.headerButtons();
+    const allVisibleButtons = currentButtons.map(btn => ({ ...btn, hidden: false }));
+    this.store.setHeaderButtons(allVisibleButtons);
+    console.log('All buttons shown');
+  }
+
+  public clearAllButtons() {
+    this.store.setHeaderButtons([]);
+    console.log('All buttons cleared');
+  }
+
+  public setNullButtons() {
+    this.store.setHeaderButtons(null as any);
+    console.log('Buttons set to null');
+  }
+
+  // Test header height adjustment
+  public testHeaderHeightAdjustment() {
+    console.log('=== Testing Header Height Adjustment ===');
+
+    // Test 1: Show header (should have toolbar height)
+    console.log('Test 1: Showing header with buttons');
+    this.store.setHeaderButtons(this.generateHeaderButtons());
+    setTimeout(() => {
+      const toolbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--toolbar-height');
+      console.log('Toolbar height with visible header:', toolbarHeight);
+    }, 100);
+
+    // Test 2: Hide header (should have 0 toolbar height)
+    setTimeout(() => {
+      console.log('Test 2: Hiding header');
+      this.store.setHeaderButtons([]);
+      setTimeout(() => {
+        const toolbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--toolbar-height');
+        console.log('Toolbar height with hidden header:', toolbarHeight);
+      }, 100);
+    }, 2000);
+
+    // Test 3: Show header again
+    setTimeout(() => {
+      console.log('Test 3: Showing header again');
+      this.store.setHeaderButtons(this.generateHeaderButtons());
+      setTimeout(() => {
+        const toolbarHeight = getComputedStyle(document.documentElement).getPropertyValue('--toolbar-height');
+        console.log('Toolbar height with visible header again:', toolbarHeight);
+      }, 100);
+    }, 4000);
+  }
+
   // Export methods
   private exportToXLSX(data: any[], filename: string) {
     const worksheet = XLSX.utils.json_to_sheet(data);

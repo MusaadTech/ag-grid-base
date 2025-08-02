@@ -6,6 +6,17 @@
 
   .grid-toolbar {
     flex-shrink: 0;
+    height: var(--toolbar-height, 46px);
+    overflow: hidden;
+    transition: height 0.3s ease;
+
+    // When toolbar height is 0, hide it completely
+    &:empty {
+      height: 0;
+      padding: 0;
+      margin: 0;
+      border: none;
+    }
   }
 
   ag-grid-angular {
