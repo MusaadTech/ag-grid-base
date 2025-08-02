@@ -2,21 +2,21 @@
 
 A powerful, configurable, and reusable Angular data grid component library built around AG Grid with dynamic configuration capabilities, state management, and modern Angular features.
 
-## 🚀 Features
+## Features
 
-- **🔄 Dynamic Configuration**: All grid settings configurable through centralized store
-- **🎛️ Custom Header Buttons**: Positioned start/end with custom actions
-- **📊 Multi-Row Selection**: Select multiple rows for bulk operations
-- **✏️ Editable Cells**: Inline editing with dropdowns and validation
-- **📤 Export Functionality**: XLSX and CSV export options
-- **📏 Dynamic Row Display**: Configurable visible rows with auto-scroll
-- **🎨 Custom Cell Rendering**: Status columns with color coding
-- **⚡ Real-time Updates**: Cell value changes and selection events
-- **🎯 Modern Angular**: Built with Angular 19, standalone components, and control flow
-- **📱 Responsive Design**: Works seamlessly across all device sizes
-- **🆓 Community Edition**: Uses only AG Grid Community features (no enterprise license required)
+- **Dynamic Configuration**: All grid settings configurable through centralized store
+- **Custom Header Buttons**: Positioned start/end with custom actions
+- **Multi-Row Selection**: Select multiple rows for bulk operations
+- **Editable Cells**: Inline editing with dropdowns and validation
+- **Export Functionality**: XLSX and CSV export options
+- **Dynamic Row Display**: Configurable visible rows with auto-scroll
+- **Custom Cell Rendering**: Status columns with color coding
+- **Real-time Updates**: Cell value changes and selection events
+- **Modern Angular**: Built with Angular 19, standalone components, and control flow
+- **Responsive Design**: Works seamlessly across all device sizes
+- **Community Edition**: Uses only AG Grid Community features (no enterprise license required)
 
-## 🏗️ Architecture
+## Architecture
 
 - **Angular 19** with standalone components and modern control flow (`@if`, `@for`)
 - **AG Grid Community** for powerful grid functionality (no enterprise features required)
@@ -93,7 +93,7 @@ export class MyGridComponent {
 }
 ```
 
-## 📋 Configuration Guide
+## Configuration Guide
 
 ### 1. Data Configuration
 
@@ -198,7 +198,7 @@ this.store.setInsertFn(async () => {
 });
 ```
 
-## 🎨 Customization
+## Customization
 
 ### Dynamic Row Display
 
@@ -239,7 +239,7 @@ this.exportToXLSX(data, 'filename.xlsx');
 this.exportToCSV(data, 'filename.csv');
 ```
 
-## 🔧 Advanced Features
+## Advanced Features
 
 ### Multi-Row Selection
 
@@ -275,7 +275,7 @@ this.store.scrollToLastRow();
 }
 ```
 
-## 📱 Responsive Design
+## Responsive Design
 
 The grid automatically adapts to different screen sizes and includes:
 
@@ -284,7 +284,7 @@ The grid automatically adapts to different screen sizes and includes:
 - **Dynamic height calculation** based on visible rows
 - **Mobile-friendly interactions**
 
-## 🎯 Example Implementation
+## Example Implementation
 
 The project includes a comprehensive example in `src/app/components/example/` that demonstrates:
 
@@ -301,7 +301,7 @@ Run the example to see all features in action:
 npm start
 ```
 
-## 🛠️ Development
+## Development
 
 ### Available Scripts
 
@@ -329,7 +329,7 @@ ng generate component component-name
 ng generate service service-name
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -337,17 +337,13 @@ ng generate service service-name
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [AG Grid](https://www.ag-grid.com/) for the powerful grid functionality
 - [Angular](https://angular.io/) for the amazing framework
 - [NgRx](https://ngrx.io/) for state management solutions
 
-## 📞 Support
+## Support
 
 For support and questions:
 
