@@ -1,0 +1,8 @@
+<div class="grid-container">
+  <div class="grid-toolbar">
+    <app-custom-header></app-custom-header>
+  </div>
+  <ag-grid-angular class="ag-theme-alpine" style="width: 100%; height: 100%;" [rowData]="rowData()"
+    [columnDefs]="columnDefs()" [gridOptions]="gridOptions()" (gridReady)="onGridReady()">
+  </ag-grid-angular>
+</div>

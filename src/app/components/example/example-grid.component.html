@@ -1,0 +1,82 @@
+<div class="example-grid-container">
+  <div class="example-header">
+    <h2>AG Grid Base - Example Implementation</h2>
+    <p>This is a comprehensive example demonstrating the usage of the ag-base-grid component library.</p>
+
+    <div class="example-controls">
+      <div class="control-group">
+        <label for="visibleRows">Visible Rows:</label>
+        <select id="visibleRows" (change)="onVisibleRowsChange($event)" [value]="currentVisibleRows">
+          @for (count of availableVisibleRows; track count) {
+          <option [value]="count">{{ count }} rows</option>
+          }
+        </select>
+      </div>
+
+      <div class="control-group">
+        <span class="info-text">
+          Current: {{ getCurrentVisibleRows() }} rows |
+          Total: {{ getTotalRows() }} users
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-wrapper">
+    <app-ag-base-grid></app-ag-base-grid>
+  </div>
+
+  <div class="example-features">
+    <h3>Features Demonstrated:</h3>
+    <ul>
+      <li><strong>Dynamic Configuration:</strong> All grid settings are configurable through the store</li>
+      <li><strong>Custom Header Buttons:</strong> Positioned start/end with custom actions</li>
+      <li><strong>Multi-Row Selection:</strong> Select multiple rows for bulk operations</li>
+      <li><strong>Editable Cells:</strong> Inline editing with dropdowns and validation</li>
+      <li><strong>Export Functionality:</strong> XLSX and CSV export options</li>
+      <li><strong>Dynamic Row Display:</strong> Configurable visible rows with auto-scroll</li>
+      <li><strong>Custom Cell Rendering:</strong> Status column with color coding</li>
+      <li><strong>Real-time Updates:</strong> Cell value changes and selection events</li>
+    </ul>
+
+    <div class="dynamic-controls">
+      <h4>Dynamic Configuration Demo:</h4>
+      <div class="control-buttons">
+        <button (click)="toggleColumnEditing('name')" class="demo-btn">Toggle Name Editing</button>
+        <button (click)="toggleColumnSorting('age')" class="demo-btn">Toggle Age Sorting</button>
+        <button (click)="toggleColumnFiltering('department')" class="demo-btn">Toggle Department Filter</button>
+        <button (click)="toggleButtonVisibility('settings')" class="demo-btn">Toggle Settings Button</button>
+        <button (click)="updateGridTheme('ag-theme-alpine')" class="demo-btn">Change Theme</button>
+        <button (click)="updateRowHeight(72)" class="demo-btn">Increase Row Height</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  @if (showExportModal) {
+  <div class="modal-overlay" (click)="onExportCancel()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Export Data</h3>
+        <button class="close-btn" (click)="onExportCancel()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <label for="exportFormat">Select Export Format:</label>
+        <select id="exportFormat" [(ngModel)]="selectedExportFormat" class="format-select">
+          @for (format of exportFormats; track format.value) {
+          <option [value]="format.value">
+            {{ format.label }}
+          </option>
+          }
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="onExportCancel()">Cancel</button>
+        <button class="btn btn-primary" (click)="onExportConfirm()">Export</button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

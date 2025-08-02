@@ -1,0 +1,18 @@
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  .grid-toolbar {
+    flex-shrink: 0;
+  }
+
+  ag-grid-angular {
+    // Fixed height based on visible rows (calculated in component)
+    height: var(--grid-height, 192px) !important;
+    width: 100%;
+    overflow: auto;
+    flex-shrink: 0; // Prevent flex shrinking
+  }
+}

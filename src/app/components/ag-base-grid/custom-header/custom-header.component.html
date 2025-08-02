@@ -1,0 +1,21 @@
+<div class="grid-header-buttons" #headerContainer>
+  <div class="button-group start-group">
+    @for (btn of getButtonsByPosition('start'); track btn.type) {
+    @if (!btn.hidden) {
+    <button class="action-btn" [disabled]="btn.disabled" (click)="onClick(btn)">
+      {{ btn.icon || btn.label }}
+    </button>
+    }
+    }
+  </div>
+
+  <div class="button-group end-group">
+    @for (btn of getButtonsByPosition('end'); track btn.type) {
+    @if (!btn.hidden) {
+    <button class="action-btn" [disabled]="btn.disabled" (click)="onClick(btn)">
+      {{ btn.icon || btn.label }}
+    </button>
+    }
+    }
+  </div>
+</div>
