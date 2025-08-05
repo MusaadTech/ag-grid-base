@@ -1,6 +1,7 @@
 import { Component, computed, inject, ViewChild } from '@angular/core';
-import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
 import { AgGridStore } from '../../stores/ag-grid.store';
+import { GridOptions, themeMaterial } from 'ag-grid-community';
 import { CustomHeaderComponent } from './custom-header/custom-header.component';
 
 @Component({
@@ -11,25 +12,25 @@ import { CustomHeaderComponent } from './custom-header/custom-header.component';
   styleUrl: './ag-base-grid.component.scss',
 })
 export class AgBaseGridComponent {
-  private store = inject(AgGridStore);
+  private agGridStore = inject(AgGridStore);
 
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
   // Access the signals properly
   rowData = computed(() => {
-    const data = this.store.rowData();
+    const data = this.agGridStore.rowData();
     console.log('Row data being passed to grid:', data);
     return data;
   });
 
   columnDefs = computed(() => {
-    console.log('Computing columnDefs, store columnDefs:', this.store.columnDefs());
-    return this.store.columnDefs();
+    console.log('Computing columnDefs, store columnDefs:', this.agGridStore.columnDefs());
+    return this.agGridStore.columnDefs();
   });
 
   // Check if header buttons should be visible
   shouldShowHeader = computed(() => {
-    const headerButtons = this.store.headerButtons();
+    const headerButtons = this.agGridStore.headerButtons();
 
     console.log('Checking header visibility. Buttons:', headerButtons);
 
@@ -51,11 +52,9 @@ export class AgBaseGridComponent {
   });
 
   gridOptions = computed(() => {
-    const baseOptions = this.store.gridOptions() || {};
-    // If no theme is specified, default to legacy
-    const theme = baseOptions.theme || 'legacy';
-    const visibleRows = this.store.getVisibleRows();
-    const gridConfig = this.store.getGridConfig();
+    const baseOptions = this.agGridStore.gridOptions() || {};
+    const visibleRows = this.agGridStore.getVisibleRows();
+    const gridConfig = this.agGridStore.getGridConfig();
 
     // Get row height from store configuration, fallback to 60
     const rowHeight = gridConfig?.rowHeight || 60;
@@ -67,16 +66,17 @@ export class AgBaseGridComponent {
     document.documentElement.style.setProperty('--grid-height', `${calculatedHeight}px`);
     document.documentElement.style.setProperty('--toolbar-height', `${toolbarHeight}px`);
 
+    // Merge base options with computed options, preserving AG Grid types
     const options = {
       ...baseOptions,
-      theme: theme,
-      domLayout: 'normal',
+      theme: baseOptions.theme || themeMaterial, // Use modern theming API
       rowHeight: rowHeight,
       headerHeight: headerHeight,
-      onCellValueChanged: this.store.cellValueChangedHandler(),
-      onSelectionChanged: this.store.selectionChangedHandler(),
-      onRowSelected: this.store.rowSelectedHandler()
+      onCellValueChanged: this.agGridStore.cellValueChangedHandler(),
+      onSelectionChanged: this.agGridStore.selectionChangedHandler(),
+      onRowSelected: this.agGridStore.rowSelectedHandler()
     };
+
     console.log('Grid options being passed to AG Grid:', options);
     return options;
   });
@@ -84,13 +84,13 @@ export class AgBaseGridComponent {
   onGridReady() {
     console.log('Grid ready');
     // Store the grid API reference
-    this.store.setGridApi(this.agGrid.api);
+    this.agGridStore.setGridApi(this.agGrid.api);
     this.updateGridHeight();
   }
 
   private updateGridHeight() {
-    const visibleRows = this.store.getVisibleRows();
-    const gridConfig = this.store.getGridConfig();
+    const visibleRows = this.agGridStore.getVisibleRows();
+    const gridConfig = this.agGridStore.getGridConfig();
 
     // Get row height from store configuration, fallback to 60
     const rowHeight = gridConfig?.rowHeight || 60;

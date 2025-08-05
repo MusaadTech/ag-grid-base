@@ -1,11 +1,13 @@
 import { signalStore, withState, withMethods, patchState } from '@ngrx/signals';
+import { GridOptions, themeMaterial } from 'ag-grid-community';
 import {
   HeaderButton,
   ButtonClickHandler,
   GridConfig,
+  GridRow,
+  ColumnDefinition,
+  GridApi,
   ExportConfig,
-  DataFetcher,
-  InsertFunction,
   CellValueChangedHandler,
   SelectionChangedHandler,
   RowSelectedHandler
@@ -13,23 +15,21 @@ import {
 
 export const AgGridStore = signalStore(
   withState(() => ({
-    rowData: [] as any[],
-    columnDefs: [] as any[],
-    gridOptions: {} as any,
+    rowData: [] as GridRow[],
+    columnDefs: [] as ColumnDefinition[],
+    gridOptions: {} as GridOptions,
     headerButtons: [] as HeaderButton[],
-    fetcher: undefined as DataFetcher | undefined,
-    insertFn: undefined as InsertFunction | undefined,
     buttonClickHandler: undefined as ButtonClickHandler | undefined,
     cellValueChangedHandler: undefined as CellValueChangedHandler | undefined,
     selectionChangedHandler: undefined as SelectionChangedHandler | undefined,
     rowSelectedHandler: undefined as RowSelectedHandler | undefined,
-    gridApi: undefined as any,
+    gridApi: undefined as GridApi | undefined,
     visibleRows: 3, // Default number of visible rows
     gridConfig: {
-      theme: 'legacy',
-      rowHeight: 48,
-      headerHeight: 48,
-      defaultVisibleRows: 3,
+      theme: themeMaterial,
+      rowHeight: 60,
+      headerHeight: 60,
+      defaultVisibleRows: 5,
       enableExport: true,
       enableMultiSelection: true,
       enableInlineEditing: true,
@@ -48,153 +48,195 @@ export const AgGridStore = signalStore(
   })),
 
   withMethods((store) => ({
-    setRowData: (data: any[]) => patchState(store, { rowData: data }),
-    setColumnDefs: (defs: any[]) => patchState(store, { columnDefs: defs }),
-    setGridOptions: (options: any) => patchState(store, { gridOptions: options }),
-    setHeaderButtons: (buttons: HeaderButton[]) => patchState(store, { headerButtons: buttons }),
-    setDataFetcher: (fn: DataFetcher) => patchState(store, { fetcher: fn }),
-    setInsertFn: (fn: InsertFunction) => patchState(store, { insertFn: fn }),
+    // Data management
+    setRowData: (data: GridRow[]) => {
+      if (Array.isArray(data)) {
+        patchState(store, { rowData: data });
+      } else {
+        console.warn('setRowData: Invalid data provided, expected array');
+      }
+    },
+    addRow: (row: GridRow) => {
+      if (row && typeof row === 'object' && row.id !== undefined) {
+        const currentData = store.rowData();
+        patchState(store, { rowData: [...currentData, row] });
+      } else {
+        console.warn('addRow: Invalid row provided, must have id property');
+      }
+    },
+    updateRow: (index: number, row: GridRow) => {
+      const currentData = store.rowData();
+      if (index >= 0 && index < currentData.length && row && typeof row === 'object') {
+        const updatedData = [...currentData];
+        updatedData[index] = row;
+        patchState(store, { rowData: updatedData });
+      } else {
+        console.warn(`updateRow: Invalid index ${index} or row data`);
+      }
+    },
+    removeRow: (index: number) => {
+      const currentData = store.rowData();
+      if (index >= 0 && index < currentData.length) {
+        const updatedData = currentData.filter((_, i) => i !== index);
+        patchState(store, { rowData: updatedData });
+      } else {
+        console.warn(`removeRow: Invalid index ${index}`);
+      }
+    },
+    removeRows: (indices: number[]) => {
+      const currentData = store.rowData();
+      if (Array.isArray(indices)) {
+        const validIndices = indices.filter(index => index >= 0 && index < currentData.length);
+        const updatedData = currentData.filter((_, i) => !validIndices.includes(i));
+        patchState(store, { rowData: updatedData });
+      } else {
+        console.warn('removeRows: Invalid indices provided, expected array');
+      }
+    },
+    clearData: () => patchState(store, { rowData: [] }),
+
+    // Configuration management
+    setColumnDefs: (defs: ColumnDefinition[]) => {
+      if (Array.isArray(defs)) {
+        patchState(store, { columnDefs: defs });
+      } else {
+        console.warn('setColumnDefs: Invalid column definitions provided, expected array');
+      }
+    },
+    setGridOptions: (options: GridOptions) => {
+      if (options && typeof options === 'object') {
+        patchState(store, { gridOptions: options });
+      } else {
+        console.warn('setGridOptions: Invalid grid options provided, expected object');
+      }
+    },
+    setHeaderButtons: (buttons: HeaderButton[]) => {
+      if (Array.isArray(buttons)) {
+        patchState(store, { headerButtons: buttons });
+      } else {
+        console.warn('setHeaderButtons: Invalid buttons provided, expected array');
+      }
+    },
+    setGridConfig: (config: Partial<GridConfig>) => {
+      if (config && typeof config === 'object') {
+        patchState(store, { gridConfig: { ...store.gridConfig(), ...config } });
+      } else {
+        console.warn('setGridConfig: Invalid config provided, expected object');
+      }
+    },
+    setExportConfig: (config: Partial<ExportConfig>) => {
+      if (config && typeof config === 'object') {
+        patchState(store, { exportConfig: { ...store.exportConfig(), ...config } });
+      } else {
+        console.warn('setExportConfig: Invalid config provided, expected object');
+      }
+    },
+
+    // Event handlers
     setButtonClickHandler: (handler: ButtonClickHandler) => patchState(store, { buttonClickHandler: handler }),
     setCellValueChangedHandler: (handler: CellValueChangedHandler) => patchState(store, { cellValueChangedHandler: handler }),
     setSelectionChangedHandler: (handler: SelectionChangedHandler) => patchState(store, { selectionChangedHandler: handler }),
     setRowSelectedHandler: (handler: RowSelectedHandler) => patchState(store, { rowSelectedHandler: handler }),
-    setGridApi: (api: any) => patchState(store, { gridApi: api }),
-    setGridConfig: (config: Partial<GridConfig>) => patchState(store, { gridConfig: { ...store.gridConfig(), ...config } }),
-    setExportConfig: (config: Partial<ExportConfig>) => patchState(store, { exportConfig: { ...store.exportConfig(), ...config } }),
 
-    getSelectedRows: () => {
+    // Grid API management
+    setGridApi: (api: GridApi) => patchState(store, { gridApi: api }),
+
+    // Row visibility management
+    setVisibleRows: (count: number) => {
+      if (count > 0 && count <= 100) { // Reasonable limit
+        patchState(store, { visibleRows: count });
+      }
+    },
+    getVisibleRows: () => store.visibleRows(),
+    getTotalRows: () => store.rowData().length,
+
+    // Selection management
+    getSelectedRows: (): GridRow[] => {
       const api = store.gridApi();
       return api ? api.getSelectedRows() : [];
     },
 
-    setVisibleRows: (count: number) => patchState(store, { visibleRows: count }),
-
-    getVisibleRows: () => store.visibleRows(),
-
-    getTotalRows: () => store.rowData().length,
-
+    // Configuration getters
     getGridConfig: () => store.gridConfig(),
-
     getExportConfig: () => store.exportConfig(),
 
+    // Grid operations
     scrollToLastRow: () => {
       const api = store.gridApi();
-      if (api) {
-        const rowCount = store.rowData().length;
-        if (rowCount > 0) {
-          api.ensureIndexVisible(rowCount - 1, 'bottom');
-        }
-      }
-    },
+      if (api && api['getDisplayedRowCount']) {
+        const displayedRowCount = api['getDisplayedRowCount']();
+        const totalRowCount = store.rowData().length;
 
-    fetchData: async () => {
-      const fetcher = store.fetcher();
-      if (!fetcher) return console.warn('No fetcher set');
-      try {
-        const data = await fetcher();
-        patchState(store, { rowData: data });
-      } catch (err) {
-        console.error('fetchData() failed:', err);
-      }
-    },
+        // Use the smaller of displayed rows or total rows to avoid index errors
+        const safeRowCount = Math.min(displayedRowCount, totalRowCount);
 
-    triggerAction: async (type: string) => {
-      switch (type) {
-        case 'add': {
-          const insertFn = store.insertFn();
-          if (!insertFn) return console.warn('No insertFn set');
+        if (safeRowCount > 0) {
+          const lastIndex = Math.max(0, safeRowCount - 1);
           try {
-            const newItem = await insertFn();
-            const currentData = store.rowData();
-            patchState(store, { rowData: [...currentData, newItem] });
-          } catch (err) {
-            console.error('insertFn failed:', err);
+            api.ensureIndexVisible(lastIndex, 'bottom');
+          } catch (error) {
+            console.warn('Failed to scroll to last row:', error);
           }
-          break;
         }
-
-        case 'refresh': {
-          const fetcher = store.fetcher();
-          if (!fetcher) return;
-          try {
-            const data = await fetcher();
-            patchState(store, { rowData: data });
-          } catch (err) {
-            console.error('refresh failed:', err);
-          }
-          break;
-        }
-
-        default:
-          console.warn(`Unknown action: ${type}`);
       }
     },
 
+    // Button click handling (pure UI operation)
     handleButtonClick: (button: HeaderButton) => {
-      const handler = store.buttonClickHandler();
-      if (handler) {
-        handler(button);
-      } else {
-        // Fallback to default behavior
-        console.log('No custom handler set, using default behavior for:', button.type);
-        switch (button.type) {
-          case 'add': {
-            const insertFn = store.insertFn();
-            if (!insertFn) return console.warn('No insertFn set');
-            insertFn().then(newItem => {
-              const currentData = store.rowData();
-              patchState(store, { rowData: [...currentData, newItem] });
-            }).catch(err => console.error('insertFn failed:', err));
-            break;
-          }
-          case 'refresh': {
-            const fetcher = store.fetcher();
-            if (!fetcher) return;
-            fetcher().then(data => {
-              patchState(store, { rowData: data });
-            }).catch(err => console.error('refresh failed:', err));
-            break;
-          }
-          default:
-            console.warn(`Unknown action: ${button.type}`);
+      if (button && typeof button === 'object' && button.type) {
+        const handler = store.buttonClickHandler();
+        if (handler) {
+          handler(button);
+        } else {
+          console.warn('No button click handler set for:', button.type);
         }
       }
     },
 
     // Utility methods for dynamic configuration
     updateColumnEditable: (field: string, editable: boolean) => {
-      const columnDefs = store.columnDefs().map(col =>
-        col.field === field ? { ...col, editable } : col
-      );
-      patchState(store, { columnDefs });
+      if (field && typeof field === 'string') {
+        const columnDefs = store.columnDefs().map(col =>
+          col.field === field ? { ...col, editable } : col
+        );
+        patchState(store, { columnDefs });
+      }
     },
 
     updateColumnSortable: (field: string, sortable: boolean) => {
-      const columnDefs = store.columnDefs().map(col =>
-        col.field === field ? { ...col, sortable } : col
-      );
-      patchState(store, { columnDefs });
+      if (field && typeof field === 'string') {
+        const columnDefs = store.columnDefs().map(col =>
+          col.field === field ? { ...col, sortable } : col
+        );
+        patchState(store, { columnDefs });
+      }
     },
 
     updateColumnFilterable: (field: string, filterable: boolean) => {
-      const columnDefs = store.columnDefs().map(col =>
-        col.field === field ? { ...col, filter: filterable } : col
-      );
-      patchState(store, { columnDefs });
+      if (field && typeof field === 'string') {
+        const columnDefs = store.columnDefs().map(col =>
+          col.field === field ? { ...col, filter: filterable } : col
+        );
+        patchState(store, { columnDefs });
+      }
     },
 
     toggleButtonVisibility: (buttonType: string, hidden: boolean) => {
-      const headerButtons = store.headerButtons().map(btn =>
-        btn.type === buttonType ? { ...btn, hidden } : btn
-      );
-      patchState(store, { headerButtons });
+      if (buttonType && typeof buttonType === 'string') {
+        const headerButtons = store.headerButtons().map(btn =>
+          btn.type === buttonType ? { ...btn, hidden } : btn
+        );
+        patchState(store, { headerButtons });
+      }
     },
 
     toggleButtonDisabled: (buttonType: string, disabled: boolean) => {
-      const headerButtons = store.headerButtons().map(btn =>
-        btn.type === buttonType ? { ...btn, disabled } : btn
-      );
-      patchState(store, { headerButtons });
+      if (buttonType && typeof buttonType === 'string') {
+        const headerButtons = store.headerButtons().map(btn =>
+          btn.type === buttonType ? { ...btn, disabled } : btn
+        );
+        patchState(store, { headerButtons });
+      }
     },
 
     // Utility method to check if header should be visible

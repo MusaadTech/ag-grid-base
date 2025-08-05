@@ -13,11 +13,11 @@ import { IHeaderParams } from 'ag-grid-community';
 export class CustomHeaderComponent implements OnInit {
   @ViewChild('headerContainer', { static: true }) headerContainer!: ElementRef;
 
-  private store = inject(AgGridStore);
+  private agGridStore = inject(AgGridStore);
   params?: IHeaderParams;
 
   // Make buttons reactive to store changes
-  buttons = computed(() => this.store.headerButtons());
+  buttons = computed(() => this.agGridStore.headerButtons());
 
   // Check if there are any visible buttons
   hasVisibleButtons = computed(() => {
@@ -45,7 +45,7 @@ export class CustomHeaderComponent implements OnInit {
   onClick(button: HeaderButton) {
     if (!button.disabled && !button.hidden) {
       console.log('Button clicked:', button.type);
-      this.store.handleButtonClick(button);
+      this.agGridStore.handleButtonClick(button);
     }
   }
 
