@@ -1,66 +1,66 @@
-# 📖 AG Grid Base Component - Complete Project Guide
+# AG Grid Base Component - Complete Project Guide
 
 A comprehensive guide to understanding and utilizing the AG Grid base component architecture, with detailed explanations of every aspect of the project.
 
-## 📑 Table of Contents
+## Table of Contents
 
-- [🏗️ Project Architecture](#️-project-architecture)
+- [Project Architecture](#project-architecture)
   - [Core Philosophy](#core-philosophy)
   - [Architecture Diagram](#architecture-diagram)
-- [📁 Project Structure](#-project-structure)
-- [🗄️ State Management (AgGridStore)](#️-state-management-aggridstore)
+- [Project Structure](#project-structure)
+- [State Management (AgGridStore)](#state-management-aggridstore)
   - [Core Signals](#core-signals)
   - [Key Methods](#key-methods)
     - [Data Management](#data-management)
     - [Configuration](#configuration)
     - [Utility Methods](#utility-methods)
-- [🎯 Base Component (AgBaseGridComponent)](#-base-component-agbasegridcomponent)
+- [Base Component (AgBaseGridComponent)](#base-component-agbasegridcomponent)
   - [Core Features](#core-features)
     - [1. Reactive Data Binding](#1-reactive-data-binding)
     - [2. Dynamic Header Visibility](#2-dynamic-header-visibility)
     - [3. Dynamic Height Calculation](#3-dynamic-height-calculation)
   - [Template Structure](#template-structure)
-- [🎨 Custom Header Component](#-custom-header-component)
+- [Custom Header Component](#custom-header-component)
   - [Features](#features)
     - [1. Button Management](#1-button-management)
     - [2. Button Click Handling](#2-button-click-handling)
   - [Template Structure](#template-structure-1)
-- [📋 Type Definitions](#-type-definitions)
+- [Type Definitions](#type-definitions)
   - [Core Interfaces](#core-interfaces)
     - [GridRow](#gridrow)
     - [ColumnDefinition](#columndefinition)
     - [HeaderButton](#headerbutton)
     - [GridConfig](#gridconfig)
-- [🔧 Advanced Usage Patterns](#-advanced-usage-patterns)
+- [Advanced Usage Patterns](#advanced-usage-patterns)
   - [1. Multiple Grid Instances](#1-multiple-grid-instances)
   - [2. Dynamic Updates](#2-dynamic-updates)
   - [3. Custom Wrapper Component](#3-custom-wrapper-component)
   - [4. Event-Driven Architecture](#4-event-driven-architecture)
-- [🎨 Theming and Styling](#-theming-and-styling)
+- [Theming and Styling](#theming-and-styling)
   - [Modern AG Grid Theming](#modern-ag-grid-theming)
   - [Custom CSS Variables](#custom-css-variables)
-- [🚀 Performance Optimizations](#-performance-optimizations)
+- [Performance Optimizations](#performance-optimizations)
   - [1. Computed Properties](#1-computed-properties)
   - [2. Efficient Updates](#2-efficient-updates)
   - [3. Memory Management](#3-memory-management)
-- [🔍 Debugging and Troubleshooting](#-debugging-and-troubleshooting)
+- [Debugging and Troubleshooting](#debugging-and-troubleshooting)
   - [Common Issues](#common-issues)
     - [1. Grid Not Rendering](#1-grid-not-rendering)
     - [2. Header Not Showing](#2-header-not-showing)
     - [3. Theme Issues](#3-theme-issues)
   - [Debug Methods](#debug-methods)
-- [📚 Best Practices](#-best-practices)
+- [Best Practices](#best-practices)
   - [1. Data Management](#1-data-management)
   - [2. Performance](#2-performance)
   - [3. User Experience](#3-user-experience)
   - [4. Code Organization](#4-code-organization)
-- [🎯 Migration Guide](#-migration-guide)
+- [Migration Guide](#migration-guide)
   - [From Legacy AG Grid](#from-legacy-ag-grid)
-- [🚀 Production Checklist](#-production-checklist)
+- [Production Checklist](#production-checklist)
 
 ---
 
-## 🏗️ Project Architecture
+## Project Architecture
 
 ### Core Philosophy
 
@@ -102,13 +102,13 @@ This project follows the **Single Responsibility Principle** with a **pure clien
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
 ├── app/
 │   ├── components/
-│   │   ├── ag-base-grid/                    # 🎯 Main Base Component
+│   │   ├── ag-base-grid/                    # Main Base Component
 │   │   │   ├── ag-base-grid.component.ts    # Core grid logic
 │   │   │   ├── ag-base-grid.component.html  # Grid template
 │   │   │   ├── ag-base-grid.component.scss  # Grid styles
@@ -116,16 +116,16 @@ src/
 │   │   │       ├── custom-header.component.ts
 │   │   │       ├── custom-header.component.html
 │   │   │       └── custom-header.component.scss
-│   │   └── example/                         # 📚 Example Implementation
+│   │   └── example/                         # Example Implementation
 │   │       ├── example-grid.component.ts    # Full usage example
 │   │       ├── example-grid.component.html  # Example template
 │   │       └── example-grid.component.scss  # Example styles
 │   └── stores/
-│       ├── ag-grid.store.ts                 # 🗄️ State Management
-│       └── ag-grid.model.ts                 # 📋 Type Definitions
+│       ├── ag-grid.store.ts                 # State Management
+│       └── ag-grid.model.ts                 # Type Definitions
 ```
 
-## 🗄️ State Management (AgGridStore)
+## State Management (AgGridStore)
 
 ### Core Signals
 
@@ -199,7 +199,7 @@ toggleButtonVisibility(buttonType: string, hidden: boolean): void
 toggleButtonDisabled(buttonType: string, disabled: boolean): void
 ```
 
-## 🎯 Base Component (AgBaseGridComponent)
+## Base Component (AgBaseGridComponent)
 
 ### Core Features
 
@@ -272,7 +272,7 @@ private updateGridHeight() {
 </div>
 ```
 
-## 🎨 Custom Header Component
+## Custom Header Component
 
 ### Features
 
@@ -315,7 +315,7 @@ onButtonClick(button: HeaderButton) {
 }
 ```
 
-## 📋 Type Definitions
+## Type Definitions
 
 ### Core Interfaces
 
@@ -374,7 +374,7 @@ export interface GridConfig {
 }
 ```
 
-## 🔧 Advanced Usage Patterns
+## Advanced Usage Patterns
 
 ### 1. Multiple Grid Instances
 
@@ -507,7 +507,7 @@ export class EventDrivenGridComponent {
 }
 ```
 
-## 🎨 Theming and Styling
+## Theming and Styling
 
 ### Modern AG Grid Theming
 
@@ -546,7 +546,7 @@ this.agGridStore.setGridConfig({ theme: themes.material });
 }
 ```
 
-## 🚀 Performance Optimizations
+## Performance Optimizations
 
 ### 1. Computed Properties
 ```typescript
@@ -580,7 +580,7 @@ ngOnDestroy() {
 }
 ```
 
-## 🔍 Debugging and Troubleshooting
+## Debugging and Troubleshooting
 
 ### Common Issues
 
@@ -624,7 +624,7 @@ debugGridState() {
 }
 ```
 
-## 📚 Best Practices
+## Best Practices
 
 ### 1. Data Management
 - Always validate data before setting it
@@ -650,7 +650,7 @@ debugGridState() {
 - Create reusable wrapper components
 - Document complex configurations
 
-## 🎯 Migration Guide
+## Migration Guide
 
 ### From Legacy AG Grid
 
@@ -684,7 +684,7 @@ debugGridState() {
    }
    ```
 
-## 🚀 Production Checklist
+## Production Checklist
 
 - [ ] **Dependencies**: All required packages installed
 - [ ] **Types**: Full TypeScript support configured
